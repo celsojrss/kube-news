@@ -10,6 +10,7 @@ pipeline{
                 }
             }
         }
+
         stage('Push Docker Image'){
             steps{
                 script{
@@ -17,6 +18,14 @@ pipeline{
                         dockerapp.push('lateste')
                         dockerapp.push("${env.BUILD_ID}")
                     }
+                }
+            }
+        }
+
+        stage('Deploy Kubernetes'){
+            steps{
+                withKubeconfig([credentialsId: 'kubeconfig']){
+                    sh 'kubectl apply -f ./k8s/deployment.yaml'
                 }
             }
         }
